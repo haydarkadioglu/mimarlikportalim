@@ -219,12 +219,13 @@ async def purchase_course(course_id: str, current_user: User = Depends(get_curre
     if existing_purchase:
         raise HTTPException(status_code=400, detail="Course already purchased")
     
-    # Create purchase (mock - always successful)
+    # Create purchase (mock - always successful for free courses, or paid courses in prototype)
     purchase = Purchase(
         user_id=current_user.id,
         course_id=course_id,
         amount=course['price'],
-        currency=course['currency']
+        currency=course['currency'],
+        status="completed"  # For prototype - always completed, for free courses automatically approved
     )
     
     purchase_doc = purchase.dict()
