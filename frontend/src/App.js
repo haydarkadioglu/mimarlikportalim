@@ -1370,9 +1370,18 @@ const AdminPage = () => {
                         <div className="flex-1">
                           <h3 className="font-semibold text-lg">{course.title}</h3>
                           <p className="text-gray-600 text-sm mb-2 line-clamp-2">{course.description}</p>
-                          <div className="flex items-center gap-4 text-sm text-gray-500">
-                            <span>{course.price} {course.currency}</span>
-                            <span>{course.videos.length} video</span>
+                          <div className="flex items-center gap-4 text-sm text-gray-500 mb-2">
+                            {course.price === 0 ? (
+                              <Badge variant="outline" className="text-green-600 border-green-600">
+                                ÜCRETSİZ
+                              </Badge>
+                            ) : (
+                              <span className="font-medium">{course.price} {course.currency}</span>
+                            )}
+                            <span>{course.videos?.length || 0} video</span>
+                            <span className={course.is_active ? "text-green-600" : "text-red-600"}>
+                              {course.is_active ? "Aktif" : "Pasif"}
+                            </span>
                           </div>
                         </div>
                         <div className="flex gap-2 ml-4">
