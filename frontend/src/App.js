@@ -179,6 +179,207 @@ const Navigation = () => {
   );
 };
 
+// Course Detail Page
+const CourseDetailPage = ({ courseId }) => {
+  const [course, setCourse] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
+
+  useEffect(() => {
+    fetchCourseDetail();
+  }, [courseId]);
+
+  const fetchCourseDetail = async () => {
+    try {
+      const response = await axios.get(`${API}/courses`);
+      const foundCourse = response.data.find(c => c.id === courseId);
+      setCourse(foundCourse);
+    } catch (error) {
+      console.error('Kurs detayları yüklenemedi:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePurchase = async () => {
+    if (!user) {
+      window.location.href = '#login';
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(`${API}/purchase/${courseId}`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      if (course.price === 0) {
+        toast({
+          title: "Başarılı!",
+          description: "Ücretsiz eğitime kayıt oldunuz. Dashboard'dan erişebilirsiniz.",
+        });
+      } else {
+        toast({
+          title: "Başarılı!",
+          description: "Eğitim başarıyla satın alındı. Dashboard'dan erişebilirsiniz.",
+        });
+      }
+      
+      setTimeout(() => {
+        window.location.href = '#dashboard';
+      }, 1500);
+    } catch (error) {
+      toast({
+        title: "Hata!",
+        description: error.response?.data?.detail || "Satın alma işlemi başarısız.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen pt-16 bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Eğitim detayları yükleniyor...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!course) {
+    return (
+      <div className="min-h-screen pt-16 bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Eğitim Bulunamadı</h1>
+          <Button onClick={() => window.location.href = '#home'}>
+            Ana Sayfaya Dön
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen pt-16 bg-gray-50">
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <Button 
+          variant="outline" 
+          onClick={() => window.location.href = '#home'}
+          className="mb-6"
+        >
+          ← Ana Sayfaya Dön
+        </Button>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Course Content */}
+          <div className="lg:col-span-2">
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+              {course.thumbnail_url && (
+                <div className="aspect-video bg-gray-200">
+                  <img 
+                    src={course.thumbnail_url} 
+                    alt={course.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              
+              <div className="p-6">
+                <h1 className="text-3xl font-bold text-gray-900 mb-4">{course.title}</h1>
+                <p className="text-lg text-gray-700 mb-6">{course.description}</p>
+                
+                <div className="mb-6">
+                  <h3 className="text-xl font-semibold mb-4">Eğitim İçeriği</h3>
+                  {course.videos && course.videos.length > 0 ? (
+                    <div className="space-y-3">
+                      {course.videos.map((video, index) => (
+                        <div key={index} className="flex items-center p-3 bg-gray-50 rounded-lg">
+                          <Play className="w-5 h-5 text-blue-600 mr-3" />
+                          <div className="flex-1">
+                            <h4 className="font-medium">{video.title}</h4>
+                            {video.description && (
+                              <p className="text-sm text-gray-600">{video.description}</p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-600">Henüz video eklenmemiş.</p>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Purchase Card */}
+          <div className="lg:col-span-1">
+            <Card className="sticky top-24">
+              <CardContent className="p-6">
+                <div className="text-center mb-6">
+                  {course.price === 0 ? (
+                    <div>
+                      <span className="text-3xl font-bold text-green-600">ÜCRETSİZ</span>
+                      <p className="text-sm text-gray-600 mt-1">Bu eğitim tamamen ücretsiz!</p>
+                    </div>
+                  ) : (
+                    <div>
+                      <span className="text-3xl font-bold text-blue-600">
+                        {course.price} {course.currency}
+                      </span>
+                      <p className="text-sm text-gray-600 mt-1">Tek seferlik ödeme</p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-4 mb-6">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600">Video Sayısı:</span>
+                    <span className="font-semibold">{course.videos?.length || 0} Video</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600">Erişim:</span>
+                    <span className="font-semibold">Sınırsız</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600">Sertifika:</span>
+                    <span className="font-semibold">Var</span>
+                  </div>
+                </div>
+
+                <Button 
+                  className="w-full text-lg py-6" 
+                  onClick={handlePurchase}
+                >
+                  {course.price === 0 ? (
+                    <>
+                      <BookOpen className="mr-2 h-5 w-5" />
+                      Ücretsiz Kayıt Ol
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingCart className="mr-2 h-5 w-5" />
+                      Satın Al
+                    </>
+                  )}
+                </Button>
+
+                {!user && (
+                  <p className="text-sm text-gray-600 text-center mt-4">
+                    Satın almak için <a href="#login" className="text-blue-600 hover:underline">giriş yapın</a>
+                  </p>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // Home Page
 const HomePage = () => {
   const [courses, setCourses] = useState([]);
@@ -197,7 +398,11 @@ const HomePage = () => {
     }
   };
 
-  const handlePurchase = async (courseId) => {
+  const handleCourseView = (courseId) => {
+    window.location.href = `#course/${courseId}`;
+  };
+
+  const handleQuickPurchase = async (courseId, price) => {
     if (!user) {
       window.location.href = '#login';
       return;
@@ -208,10 +413,18 @@ const HomePage = () => {
       await axios.post(`${API}/purchase/${courseId}`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      toast({
-        title: "Başarılı!",
-        description: "Eğitim başarıyla satın alındı. Dashboard'dan erişebilirsiniz.",
-      });
+      
+      if (price === 0) {
+        toast({
+          title: "Başarılı!",
+          description: "Ücretsiz eğitime kayıt oldunuz. Dashboard'dan erişebilirsiniz.",
+        });
+      } else {
+        toast({
+          title: "Başarılı!",
+          description: "Eğitim başarıyla satın alındı. Dashboard'dan erişebilirsiniz.",
+        });
+      }
     } catch (error) {
       toast({
         title: "Hata!",
