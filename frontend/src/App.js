@@ -1243,7 +1243,8 @@ const AdminPage = () => {
                   <Textarea
                     id="description"
                     required
-                    rows={3}
+                    rows={4}
+                    placeholder="Eğitimin detaylı açıklaması..."
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   />
