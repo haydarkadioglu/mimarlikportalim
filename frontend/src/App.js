@@ -1412,6 +1412,11 @@ function App() {
   }, []);
 
   const renderPage = () => {
+    if (currentHash.startsWith('course/')) {
+      const courseId = currentHash.split('/')[1];
+      return <CourseDetailPage courseId={courseId} />;
+    }
+    
     switch (currentHash) {
       case 'login':
         return <LoginPage />;
