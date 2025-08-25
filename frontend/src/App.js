@@ -1257,10 +1257,13 @@ const AdminPage = () => {
                       id="price"
                       type="number"
                       step="0.01"
+                      min="0"
                       required
+                      placeholder="0 = Ücretsiz"
                       value={formData.price}
                       onChange={(e) => setFormData({ ...formData, price: e.target.value })}
                     />
+                    <p className="text-xs text-gray-500 mt-1">0 yazarsanız eğitim ücretsiz olur</p>
                   </div>
                   <div>
                     <Label htmlFor="currency">Para Birimi</Label>
@@ -1272,9 +1275,9 @@ const AdminPage = () => {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="TRY">TRY</SelectItem>
-                        <SelectItem value="USD">USD</SelectItem>
-                        <SelectItem value="EUR">EUR</SelectItem>
+                        <SelectItem value="TRY">TRY (Türk Lirası)</SelectItem>
+                        <SelectItem value="USD">USD (Dolar)</SelectItem>
+                        <SelectItem value="EUR">EUR (Euro)</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
