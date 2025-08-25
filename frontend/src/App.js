@@ -1320,16 +1320,18 @@ const AdminPage = () => {
                           </div>
                           <Input
                             placeholder="Video Başlığı"
+                            required
                             value={video.title}
                             onChange={(e) => updateVideo(index, 'title', e.target.value)}
                           />
                           <Input
-                            placeholder="Vimeo Embed URL"
+                            placeholder="Vimeo Embed URL (örn: https://player.vimeo.com/video/123456789)"
+                            required
                             value={video.vimeo_url}
                             onChange={(e) => updateVideo(index, 'vimeo_url', e.target.value)}
                           />
                           <Textarea
-                            placeholder="Video Açıklaması"
+                            placeholder="Video açıklaması (opsiyonel)"
                             rows={2}
                             value={video.description}
                             onChange={(e) => updateVideo(index, 'description', e.target.value)}
