@@ -542,19 +542,44 @@ const HomePage = () => {
                 <CardContent>
                   <div className="flex justify-between items-center mb-4">
                     <Badge variant="secondary">
-                      {course.videos.length} Video
+                      {course.videos?.length || 0} Video
                     </Badge>
-                    <span className="text-2xl font-bold text-blue-600">
-                      {course.price} {course.currency}
-                    </span>
+                    {course.price === 0 ? (
+                      <span className="text-2xl font-bold text-green-600">
+                        ÜCRETSİZ
+                      </span>
+                    ) : (
+                      <span className="text-2xl font-bold text-blue-600">
+                        {course.price} {course.currency}
+                      </span>
+                    )}
                   </div>
-                  <Button 
-                    className="w-full" 
-                    onClick={() => handlePurchase(course.id)}
-                  >
-                    <ShoppingCart className="mr-2 h-4 w-4" />
-                    Satın Al
-                  </Button>
+                  <div className="space-y-2">
+                    <Button 
+                      variant="outline"
+                      className="w-full" 
+                      onClick={() => handleCourseView(course.id)}
+                    >
+                      <BookOpen className="mr-2 h-4 w-4" />
+                      Detaylarını İncele
+                    </Button>
+                    <Button 
+                      className="w-full" 
+                      onClick={() => handleQuickPurchase(course.id, course.price)}
+                    >
+                      {course.price === 0 ? (
+                        <>
+                          <Play className="mr-2 h-4 w-4" />
+                          Ücretsiz Kayıt Ol
+                        </>
+                      ) : (
+                        <>
+                          <ShoppingCart className="mr-2 h-4 w-4" />
+                          Hızlı Satın Al
+                        </>
+                      )}
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ))}
