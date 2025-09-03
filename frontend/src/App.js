@@ -18,6 +18,24 @@ import { Play, BookOpen, Users, Award, Mail, Phone, MapPin, Menu, X, ShoppingCar
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
+// Debug için axios interceptor ekleyelim
+axios.interceptors.request.use(request => {
+  console.log('Starting Request:', request.url);
+  return request;
+});
+
+axios.interceptors.response.use(
+  response => {
+    console.log('Response:', response);
+    return response;
+  },
+  error => {
+    console.error('API Error:', error.response?.data || error.message);
+    console.error('Request URL:', error.config?.url);
+    return Promise.reject(error);
+  }
+);
+
 // Auth Context
 const AuthContext = React.createContext();
 
