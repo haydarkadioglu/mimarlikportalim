@@ -189,10 +189,4 @@ Bu proje MIT lisansı altında lisanslanmıştır.
 
 Proje Sahibi: [@haydarkadioglu](https://github.com/haydarkadioglu)
 
-## 🙏 Teşekkürler
 
-Bu proje aşağıdaki açık kaynak teknolojiler kullanılarak geliştirilmiştir:
-- React Team
-- FastAPI Team
-- Tailwind CSS Team
-- Radix UI Team
